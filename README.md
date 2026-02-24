@@ -62,7 +62,7 @@ Reads an Excel differential table and saves `volcano_CES.png` (top‑5 labels, F
 
 ## Cite
 
-**Vignolle GA *et al*.** “Geospatial Factors Shape the Human Brain–Gut–Microbiome System.” (see manuscript in repo for full author list and details). [\[Manuscript...raft_final \| Word\]](https://uclahs-my.sharepoint.com/personal/gvignolle_mednet_ucla_edu/_layouts/15/Doc.aspx?sourcedoc=%7BE0733823-21E7-43E2-AF91-AB0BA07D8102%7D&file=Manuscript_draft_final.docx&action=default&mobileredirect=true)
+**Vignolle GA *et al*.** “Geospatial Factors Shape the Human Brain–Gut–Microbiome System.” (see manuscript in repo for full author list and details). [Manuscript](http://something)
 
 ***
 
