@@ -68,8 +68,8 @@ Reads an Excel differential table and saves `volcano_CES.png` (top‑5 labels, F
 
 ## Contact
 
-For questions or data access, contact the corresponding authors listed in the manuscript. [\[Manuscript...raft_final \| Word\]](https://uclahs-my.sharepoint.com/personal/gvignolle_mednet_ucla_edu/_layouts/15/Doc.aspx?sourcedoc=%7BE0733823-21E7-43E2-AF91-AB0BA07D8102%7D&file=Manuscript_draft_final.docx&action=default&mobileredirect=true)
+For questions or data access, contact the corresponding authors listed in the manuscript. 
 
 ***
 
-**License:** MIT (recommended) — update as appropriate for your lab/repository.
+**License:** MIT
