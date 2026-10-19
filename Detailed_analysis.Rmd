@@ -1,6 +1,6 @@
 ---
-title: "MAP Cell Reports Medicine Revision Analysis"
-author: "Revision-analysis Rmd for reviewer response"
+title: "MAP Analysis"
+author: "Analysis Rmd"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -8,11 +8,11 @@ output:
     toc_depth: 3
     number_sections: true
 params:
-  base_dir: "/data/PROJECTS/MAP_GV_2025/code/REVISIONS/"
-  output_dir: "revision_outputs"
+  base_dir: "/data/PROJECTS/MAP_GV_2025/code//"
+  output_dir: "_outputs"
   phenotype_file: "complete_phenotype_data.xlsx"
   supplemental_file: "Supplemental_Data.xlsx"
-  reviewer_master_file: "reviewer_response_master_table.xlsx"
+  _master_file: "_response_master_table.xlsx"
   external_zip: "extra_samples_to_test.zip"
   # Preferred: create this once from the original analysis Rmd after all modality matrices are built:
   # saveRDS(list(phenotype = combined_df_total, blocks = X.list), "analysis_ready_blocks.rds")
@@ -29,9 +29,9 @@ params:
 
 # Purpose
 
-This R Markdown file is a **clean revision-analysis workflow** for the Cell Reports Medicine reviewer response. It is deliberately separate from the exploratory MAP Rmd files. It generates the reviewer-requested supplemental figures/tables and the robustness analyses needed for the response letter.
+This R Markdown file is a **clean -analysis workflow**.  It generates the supplemental figures/tables and the robustness analyses needed for the response letter.
 
-Primary reviewer-response targets:
+Primary -response targets:
 
 1. Cohort/sample accounting across modalities.
 2. Covariate inventory and Table 1 verification.
@@ -70,11 +70,11 @@ If this file is absent, the workflow will still generate analyses from the uploa
 
 if (interactive() || !exists("params")) {
   params <- list(
-    base_dir            = "/data/PROJECTS/MAP_GV_2025/code/REVISIONS/",
-    output_dir          = "/data/PROJECTS/MAP_GV_2025/code/REVISIONS/revision_outputs",
+    base_dir            = "/data/PROJECTS/MAP_GV_2025/code//",
+    output_dir          = "/data/PROJECTS/MAP_GV_2025/code//_outputs",
     phenotype_file      = "complete_phenotype_data.xlsx",
     supplemental_file   = "Supplemental_Data.xlsx",
-    reviewer_master_file = "reviewer_response_master_table.xlsx",
+    _master_file = "_response_master_table.xlsx",
     external_zip        = "extra_samples_to_test.zip",
     # Preferred: create this once from the original analysis Rmd after all
     # modality matrices are built:
@@ -345,7 +345,7 @@ align_block <- function(mat, meta, id_col = "NDPNum") {
 input_paths <- list(
   phenotype = file.path(base_dir, params$phenotype_file),
   supplemental = file.path(base_dir, params$supplemental_file),
-  reviewer_master = file.path(base_dir, params$reviewer_master_file),
+  _master = file.path(base_dir, params$_master_file),
   external_zip = file.path(base_dir, params$external_zip),
   analysis_ready = file.path(base_dir, params$analysis_ready_rds),
   ces_file = file.path(base_dir, params$ces_file)
@@ -799,7 +799,7 @@ if (nrow(modality_from_blocks) > 0) {
 # Covariate inventory and Table 1 verification
 
 ```{r covariate-inventory}
-# Reviewer-requested covariates and likely phenotype columns.
+# -requested covariates and likely phenotype columns.
 covariate_patterns <- c(
   age = "^Age$|Age_1$",
   sex = "^Sex$|Demog_Sex",
@@ -2493,14 +2493,14 @@ if (length(blocks) > 0 &&
 
 # sPLS-DA / DIABLO robustness, permutation, and feature stability
 
-The reviewers flagged the high AUC values as potential overfitting. This section should be the basis for the revised response. It intentionally separates:
+The s flagged the high AUC values as potential overfitting. This section should be the basis for the revised response. It intentionally separates:
 
 - feature selection/tuning,
 - held-out performance estimation,
 - permutation testing,
 - and selected-feature stability.
 
-For time, set `params$run_heavy_models: false` while drafting. Set to `true` for the final revision run.
+For time, set `params$run_heavy_models: false` while drafting. Set to `true` for the final  run.
 
 ```{r splsda-robustness-functions}
 ## ============================================================
@@ -3072,7 +3072,7 @@ print(p_smoke)
 ## =====================================================================
 ##  DIABLO robustness suite — repeated 85/15 holdout + permutation null
 ##
-##  Reviewer-grade implementation with full preprocessing inside each
+##  -grade implementation with full preprocessing inside each
 ##  training fold (no test-set information used to filter, impute, or
 ##  scale). Designed to address overfitting concerns raised in review.
 ##
@@ -3116,7 +3116,7 @@ if (all(c("Microbiome", "Brain_RSPW_functional") %in% names(blocks)) &&
   ## -------------------------------------------------------------------
   ## 1. Patch run_permutation_diablo() to accept holdout_prop and to
   ##    support batched resumption via start_perm. Defined here so the
-  ##    block is self-contained and reviewer-readable.
+  ##    block is self-contained and -readable.
   ## -------------------------------------------------------------------
   run_permutation_diablo <- function(X, Y, n_perm, ncomp,
                                      keepX,
@@ -3656,7 +3656,7 @@ if (is.na(external_root)) {
   }
 }
 
-## 5. Save manifest + zip provenance (two sheets so reviewers can audit both)
+## 5. Save manifest + zip provenance (two sheets so s can audit both)
 save_table(
   list(file_manifest = external_files, zip_provenance = zip_info),
   "12_external_file_manifest.xlsx"
@@ -4646,24 +4646,24 @@ if (nrow(skip_log) > 0) {
 
 ```{r recommended-mapping}
 ## -------------------------------------------------------------------
-## Reviewer-output crosswalk: maps each reviewer concern to the
-## specific corrected analyses, files, and figures in this revision.
+## -output crosswalk: maps each  concern to the
+## specific corrected analyses, files, and figures in this .
 ## -------------------------------------------------------------------
 
 recommended_mapping <- tibble::tribble(
-  ~category,                          ~reviewer,               ~reviewer_issue,                                                                            ~new_output,                                                                                                                                                                                                                                                                                                                                                                       ~where_to_use,                                                                                                  ~status,
-  "Cohort and modality coverage",     "Reviewer #1",           "Cohort skew and modality-specific sample sizes (measured vs NA-padded)",                   "03_sample_accounting.xlsx (modality_from_blocks, phenotype_availability_proxies, key_model_samples, cohort_waterfall sheets); 04_block_sample_coverage.xlsx; S_sample_availability_by_modality.png; S_cohort_waterfall.png",                                                                                                                                                          "STAR Methods Cohort; Results cohort paragraph; Figures S1-S2",                                                  "New supporting analysis",
-  "Covariate inventory and use",      "Reviewer #1, #2",       "Covariate control, completeness, and which covariates entered each model",                 "04_covariate_inventory.xlsx (with used_in_fitted_model column)",                                                                                                                                                                                                                                                                                                                                  "STAR Methods Statistics; Supplementary Table",                                                                  "New inventory with model-use audit",
-  "Table 1 verification",             "Reviewer #1 / Editor",  "Table 1 p-value and effect-size verification with explicit n per stratum",                 "05_table1_verification_manual.xlsx (with type, n_low, n_high, effect, effect_type columns: SMD for continuous, Cramer's V for categorical)",                                                                                                                                                                                                                                                       "Table 1 revision; response letter",                                                                             "Re-derived with effect sizes",
-  "Univariate model robustness",      "Reviewer #1, #2",       "Per-feature univariate associations with NA-aware preprocessing and covariate fallback",   "06_univariate_model_suite_results.xlsx (results_long, failures_long, na_summary, align_overview, runs_index sheets)",                                                                                                                                                                                                                                                                              "STAR Methods Statistics; Supplementary Tables",                                                                "Re-analysis with audit trail",
+  ~category,                          ~,               ~_issue,                                                                            ~new_output,                                                                                                                                                                                                                                                                                                                                                                       ~where_to_use,                                                                                                  ~status,
+  "Cohort and modality coverage",     " #1",           "Cohort skew and modality-specific sample sizes (measured vs NA-padded)",                   "03_sample_accounting.xlsx (modality_from_blocks, phenotype_availability_proxies, key_model_samples, cohort_waterfall sheets); 04_block_sample_coverage.xlsx; S_sample_availability_by_modality.png; S_cohort_waterfall.png",                                                                                                                                                          "STAR Methods Cohort; Results cohort paragraph; Figures S1-S2",                                                  "New supporting analysis",
+  "Covariate inventory and use",      " #1, #2",       "Covariate control, completeness, and which covariates entered each model",                 "04_covariate_inventory.xlsx (with used_in_fitted_model column)",                                                                                                                                                                                                                                                                                                                                  "STAR Methods Statistics; Supplementary Table",                                                                  "New inventory with model-use audit",
+  "Table 1 verification",             " #1 / Editor",  "Table 1 p-value and effect-size verification with explicit n per stratum",                 "05_table1_verification_manual.xlsx (with type, n_low, n_high, effect, effect_type columns: SMD for continuous, Cramer's V for categorical)",                                                                                                                                                                                                                                                       "Table 1 ; response letter",                                                                             "Re-derived with effect sizes",
+  "Univariate model robustness",      " #1, #2",       "Per-feature univariate associations with NA-aware preprocessing and covariate fallback",   "06_univariate_model_suite_results.xlsx (results_long, failures_long, na_summary, align_overview, runs_index sheets)",                                                                                                                                                                                                                                                                              "STAR Methods Statistics; Supplementary Tables",                                                                "Re-analysis with audit trail",
   "Raw block distributions",          "Editor / Both",         "Distributional transparency of raw block features by CES stratum",                          "S_distribution_<block>.png (one per block); S_block_distribution_audit.xlsx",                                                                                                                                                                                                                                                                                                                     "Document S1 / Supplementary Figures",                                                                          "New figures (measured rows only)",
-  "Demographic and geospatial QC",    "Reviewer #1",           "Demographic and geospatial distributions visible by CES stratum",                           "S_demographic_geospatial_distributions.png",                                                                                                                                                                                                                                                                                                                                                       "Document S1 / Supplementary Figures",                                                                          "New figure with per-facet n labels",
+  "Demographic and geospatial QC",    " #1",           "Demographic and geospatial distributions visible by CES stratum",                           "S_demographic_geospatial_distributions.png",                                                                                                                                                                                                                                                                                                                                                       "Document S1 / Supplementary Figures",                                                                          "New figure with per-facet n labels",
   "Microbiome composition",           "Editor / Both",         "Raw microbiome composition (host vs microbial fractions, group layout)",                   "S_microbiome_composition_top20.png; S_microbiome_composition_top20_side.png; S_microbiome_composition_top20_side_zoom.png; S_microbiome_composition_top10_side.png; S_microbiome_composition_top10_side_zoom.png",                                                                                                                                                                                "Document S1 / Supplementary Figures",                                                                          "New figures (host taxon removed; groups side-by-side; zoomed top-N variants)",
-  "Ferutinin robustness",             "Reviewer #1",           "Ferutinin bimodality, outlier sensitivity, BMI confounding, influence diagnostics",         "07_ferutinin_robustness.xlsx (Wilcoxon, LM age+sex, LM age+sex+BMI, Cook's-D-trimmed, winsorized); S_ferutinin_robustness.png",                                                                                                                                                                                                                                                                    "Figure 2 supplement; Reviewer #1 response point",                                                              "Sensitivity analysis confirms direction",
-  "Cross-modal correlation rigor",    "Reviewer #2",           "Full-cohort correlations driven by group structure; FreeSurfer self-pairs; tied data",     "08_cross_modal_correlation_diagnostics.xlsx (summary, by_group, not_resolved sheets); S_cross_modal_full_vs_group_diagnostics.png",                                                                                                                                                                                                                                                                "Figure 3 supplement; Reviewer #2 response point",                                                              "Re-analysis with de-duplication of shared FreeSurfer features and Kendall fallback for tied features",
-  "Multi-block model robustness",     "Reviewer #1, #2",       "Overfitting / inflated AUC; preprocessing leakage; permutation testing; selection stability", "09_diablo_repeated_outer_cv.xlsx (predictions, metrics, metrics_fold, stability, runs_summary sheets); 10_diablo_permutation_null.xlsx (per_repeat, per_permutation sheets); 11_diablo_robustness_summary.xlsx; F_diablo_full_diagnostic.png; S_diablo_permutation_null_auc.png; S_diablo_feature_stability.png; models/diablo_repeated_outer_cv.rds; models/diablo_permutation_null.rds",       "Results model robustness; Figure 4 + supplement; Reviewer #1 and #2 response points",                          "Corrected re-analysis with fold-specific preprocessing, 85/15 repeated holdout, probability-based AUC, and checkpointed 1000-permutation null",
-  "External validation",              "Reviewer #2 / Editor",  "External transferability of the discovery signature on independent samples",                "12_external_file_manifest.xlsx (file_manifest, zip_provenance sheets); 13_external_clinical_with_CES_by_FIPS.xlsx; 14_external_signature_transferability.xlsx (external_scores, transfer_tests, group_tests, signature_overlap, loading_weights_used, external_data_summary sheets); S_external_signature_transferability.png",                                                                  "Supplementary section; cautious transferability paragraph",                                                    "New analysis (within-cohort z-scoring; sum of comp1+comp2+comp3 loadings; bootstrap 95% CI on rho; BH-adjusted q)",
-  "Reproducibility provenance",       "Editor",                "Pipeline reproducibility, run state, and skipped-step transparency",                        "97_reviewer_output_mapping.xlsx (crosswalk, file_audit, metadata sheets); 98_output_index.xlsx (summary, files, skip_log, run_metadata sheets); 99_skip_log_actions_needed.xlsx",                                                                                                                                                                                                                   "Code/data availability statement; methods reproducibility note",                                                "New infrastructure"
+  "Ferutinin robustness",             " #1",           "Ferutinin bimodality, outlier sensitivity, BMI confounding, influence diagnostics",         "07_ferutinin_robustness.xlsx (Wilcoxon, LM age+sex, LM age+sex+BMI, Cook's-D-trimmed, winsorized); S_ferutinin_robustness.png",                                                                                                                                                                                                                                                                    "Figure 2 supplement;  #1 response point",                                                              "Sensitivity analysis confirms direction",
+  "Cross-modal correlation rigor",    " #2",           "Full-cohort correlations driven by group structure; FreeSurfer self-pairs; tied data",     "08_cross_modal_correlation_diagnostics.xlsx (summary, by_group, not_resolved sheets); S_cross_modal_full_vs_group_diagnostics.png",                                                                                                                                                                                                                                                                "Figure 3 supplement;  #2 response point",                                                              "Re-analysis with de-duplication of shared FreeSurfer features and Kendall fallback for tied features",
+  "Multi-block model robustness",     " #1, #2",       "Overfitting / inflated AUC; preprocessing leakage; permutation testing; selection stability", "09_diablo_repeated_outer_cv.xlsx (predictions, metrics, metrics_fold, stability, runs_summary sheets); 10_diablo_permutation_null.xlsx (per_repeat, per_permutation sheets); 11_diablo_robustness_summary.xlsx; F_diablo_full_diagnostic.png; S_diablo_permutation_null_auc.png; S_diablo_feature_stability.png; models/diablo_repeated_outer_cv.rds; models/diablo_permutation_null.rds",       "Results model robustness; Figure 4 + supplement;  #1 and #2 response points",                          "Corrected re-analysis with fold-specific preprocessing, 85/15 repeated holdout, probability-based AUC, and checkpointed 1000-permutation null",
+  "External validation",              " #2 / Editor",  "External transferability of the discovery signature on independent samples",                "12_external_file_manifest.xlsx (file_manifest, zip_provenance sheets); 13_external_clinical_with_CES_by_FIPS.xlsx; 14_external_signature_transferability.xlsx (external_scores, transfer_tests, group_tests, signature_overlap, loading_weights_used, external_data_summary sheets); S_external_signature_transferability.png",                                                                  "Supplementary section; cautious transferability paragraph",                                                    "New analysis (within-cohort z-scoring; sum of comp1+comp2+comp3 loadings; bootstrap 95% CI on rho; BH-adjusted q)",
+  "Reproducibility provenance",       "Editor",                "Pipeline reproducibility, run state, and skipped-step transparency",                        "97__output_mapping.xlsx (crosswalk, file_audit, metadata sheets); 98_output_index.xlsx (summary, files, skip_log, run_metadata sheets); 99_skip_log_actions_needed.xlsx",                                                                                                                                                                                                                   "Code/data availability statement; methods reproducibility note",                                                "New infrastructure"
 )
 
 ## -------------------------------------------------------------------
@@ -4688,7 +4688,7 @@ mapping_audit <- recommended_mapping |>
     grepl("\\.(xlsx|csv|png|pdf|rds)$", referenced_files)
   ) |>
   dplyr::transmute(
-    category, reviewer,
+    category, ,
     referenced_file = referenced_files
   ) |>
   dplyr::distinct()
@@ -4760,7 +4760,7 @@ save_table(
     file_audit = mapping_audit,
     metadata   = mapping_metadata
   ),
-  "97_reviewer_output_mapping.xlsx"
+  "97__output_mapping.xlsx"
 )
 
 recommended_mapping
@@ -4771,7 +4771,7 @@ recommended_mapping
 ```{r session-info}
 
 ## =====================================================================
-## Reviewer-response figure: original (leaky) vs corrected DIABLO AUC
+## -response figure: original (leaky) vs corrected DIABLO AUC
 ##
 ## Re-derives the original AUC under the leaky pipeline (full-sample
 ## scaling/imputation, 0/1 vote score) and compares against the corrected
@@ -4911,7 +4911,7 @@ run_leaky_outer_diablo <- function(X, Y, ncomp = 3, keepX,
 }
 
 ## Reconstruct the leaky observed AUC
-message("[reviewer figure] reconstructing leaky observed CV...")
+message("[ figure] reconstructing leaky observed CV...")
 diablo_data   <- prepare_diablo_data(blocks, phenotype)
 default_keepX <- list(Microbiome            = c(70, 40, 50),
                       Brain_RSPW_functional = c(50, 10, 10))
@@ -5075,7 +5075,7 @@ run_fully_leaky_outer_diablo <- function(X, Y, ncomp = 3,
 }
 
 ## Run it (this is slower than the other reconstructions because of tuning)
-message("[reviewer figure] reconstructing FULLY leaky observed CV...")
+message("[ figure] reconstructing FULLY leaky observed CV...")
 fully_leaky_cv <- run_fully_leaky_outer_diablo(
   X = diablo_data$X, Y = diablo_data$Y, ncomp = 3,
   holdout_prop = 0.15, n_repeats = params$n_cv_repeats,
@@ -5095,7 +5095,7 @@ message(sprintf("[fully_leaky] %d successful folds; mean AUC = %.3f",
 ##     manuscript reported. Single value; used as an anchor on the figure.
 ## ---------------------------------------------------------------------
 
-message("[reviewer figure] computing in-sample training AUC...")
+message("[ figure] computing in-sample training AUC...")
 
 X_full <- lapply(diablo_data$X, function(m) {
   ok <- .filter_features_train(m); m <- m[, ok, drop = FALSE]
@@ -5122,7 +5122,7 @@ train_score <- .extract_test_score(train_pred, ncomp = 3,
                                    n_expected = length(diablo_data$Y))
 in_sample_auc <- calc_binary_metrics(diablo_data$Y, train_score)$auc
 
-message(sprintf("[reviewer figure] in-sample training AUC = %.3f",
+message(sprintf("[ figure] in-sample training AUC = %.3f",
                 in_sample_auc))
 
 ## ---------------------------------------------------------------------
