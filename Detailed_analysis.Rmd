@@ -3,7 +3,7 @@ title: "MAP Analysis"
 author: "Analysis Rmd"
 date: "`r Sys.Date()`"
 output:
-  html_document:
+  html_document: 
     toc: true
     toc_depth: 3
     number_sections: true
